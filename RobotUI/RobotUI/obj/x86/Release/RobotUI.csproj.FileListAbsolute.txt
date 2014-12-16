@@ -1,0 +1,13 @@
+E:\Github\RobotUI\RobotUI\bin\Release\RobotUI.exe
+E:\Github\RobotUI\RobotUI\bin\Release\RobotUI.pdb
+E:\Github\RobotUI\RobotUI\obj\x86\Release\MainWindow.baml
+E:\Github\RobotUI\RobotUI\obj\x86\Release\MainWindow.g.cs
+E:\Github\RobotUI\RobotUI\obj\x86\Release\App.g.cs
+E:\Github\RobotUI\RobotUI\obj\x86\Release\RobotUI_MarkupCompile.cache
+E:\Github\RobotUI\RobotUI\obj\x86\Release\RobotUI.g.resources
+E:\Github\RobotUI\RobotUI\obj\x86\Release\Robot.Properties.Resources.resources
+E:\Github\RobotUI\RobotUI\obj\x86\Release\RobotUI.csproj.GenerateResource.Cache
+E:\Github\RobotUI\RobotUI\obj\x86\Release\RobotUI.exe
+E:\Github\RobotUI\RobotUI\obj\x86\Release\RobotUI.pdb
+E:\Github\RobotSystem_New\RobotUI\RobotUI\obj\x86\Release\RobotUI.exe
+E:\Github\RobotSystem_New\RobotUI\RobotUI\obj\x86\Release\RobotUI.pdb
