@@ -11,4 +11,8 @@
     <VerifyUploadedFiles>false</VerifyUploadedFiles>
     <ProjectView>ShowAllFiles</ProjectView>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <EnableUnmanagedDebugging>true</EnableUnmanagedDebugging>
+    <StartWorkingDirectory>E:\Github\RobotSystem_New\RobotUI\Debug\</StartWorkingDirectory>
+  </PropertyGroup>
 </Project>

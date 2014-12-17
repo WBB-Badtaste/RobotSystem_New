@@ -8,14 +8,6 @@ using System.Windows.Media;
 
 namespace Robot
 {
-    public struct Target
-    {
-        public ushort ID { get; set; }///特征码，（其值为1~9999）
-        public double PosX { get; set; }///横坐标，单位mm，精确到0.32mm
-        public double PosY { get; set; }///纵坐标，单位mm，精确到0.32mm
-        public float Aangle { get; set; }///旋转角度,精确到0.5度。平行X轴为0度，正值代表顺时针偏转，负值相反
-        public long EncoderValue { get; set; }///编码器值，十位         
-    };
     public class TargetUI
     {
         public TargetUI(Target target)

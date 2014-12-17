@@ -13,6 +13,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
+using System.Runtime.InteropServices;
 
 namespace Robot
 {
@@ -38,6 +39,8 @@ namespace Robot
             //初始化通讯模块
             network = new Network();
             network.Connect("127.0.0.1", 60000, 1);
+            //初始化分配模块
+            Allocater.Start(new int[]{1},1);
             //创建屏幕相关静态数据对象
             m_staticValue = new StaticValue();
             BindCanvas();
@@ -93,7 +96,6 @@ namespace Robot
         {
             m_daMove = new DoubleAnimation();
             m_daMove.Duration = new Duration(TimeSpan.FromMilliseconds(m_staticValue.RefreshTime));
-
             m_dispatcherTimer = new DispatcherTimer();
             m_dispatcherTimer.Tick += new EventHandler(OnTimedEvent);
             m_dispatcherTimer.Interval = TimeSpan.FromMilliseconds(m_staticValue.RefreshTime);
@@ -160,7 +162,7 @@ namespace Robot
         }
         private void mainWindow_Closed(object sender, EventArgs e)
         {
-            /*            EncoderReader.Shutdown();*/
+            Encoder.Encoder_Close();
         }
         private void Button_Start_Click(object sender, RoutedEventArgs e)
         {
@@ -174,13 +176,19 @@ namespace Robot
         }
         private void button1_Click(object sender, RoutedEventArgs e)
         {
-            Target[] targets = new Target[1];
+            Target[] targets = new Target[2];
             targets[0].Aangle = 12.1F;
             targets[0].EncoderValue = 213234;
-            targets[0].ID = 1;
+            targets[0].ID = 13;
             targets[0].PosX = 12.4;
             targets[0].PosY = 123.22;
-            network.SendTargets(1, targets, 1);
+            unsafe
+            {
+                fixed(Target *ptr=&targets[0])
+                {
+                    int res = Allocater.Allocate(ptr, targets.Length);
+                }
+            }
         }
     }
 }

@@ -21,3 +21,5 @@ E:\Github\RobotSystem_New\RobotUI\RobotUI\obj\x86\Debug\RobotUI.csproj.GenerateR
 E:\Github\RobotSystem_New\RobotUI\RobotUI\bin\Debug\RobotUI.exe
 E:\Github\RobotSystem_New\RobotUI\RobotUI\bin\Debug\RobotUI.pdb
 E:\Github\RobotSystem_New\RobotUI\RobotUI\obj\x86\Debug\RobotUI.csprojResolveAssemblyReference.cache
+E:\Github\RobotSystem_New\RobotUI\Debug\RobotUI.exe
+E:\Github\RobotSystem_New\RobotUI\Debug\RobotUI.pdb
