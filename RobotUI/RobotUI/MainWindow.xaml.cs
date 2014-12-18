@@ -30,17 +30,42 @@ namespace Robot
         private DispatcherTimer m_dispatcherTimer;
         private int m_nextpos = 0;
         private int m_nowpos = 0;
-        private Network network;
         public MainWindow()
         {
             InitializeComponent();
-            //初始化Encoder
-            int res = Encoder.Encoder_StartUp();
-            //初始化通讯模块
-            network = new Network();
-            network.Connect("127.0.0.1", 60000, 1);
-            //初始化分配模块
-            Allocater.Start(new int[]{1},1);
+
+//             //初始化Encoder
+//             int res = Encoder.Encoder_StartUp();
+//             //初始化通讯模块
+//             network = new Network();
+//             network.Connect("127.0.0.1", 60000, 1);
+//             //初始化分配模块
+//             Allocater.Start(new int[]{1},1);
+            //初始化DLL
+            RCInfo[] rcInfos = new RCInfo[1];
+            rcInfos[0].RcID=1;
+            rcInfos[0].IP="127.0.0.1";
+            rcInfos[0].Port=60000;
+            unsafe
+            {
+                RCInfo2dll[] rcInfos2dll =new RCInfo2dll[rcInfos.Length];
+                for(int i=0;i<rcInfos.Length;++i )
+                {
+                    rcInfos2dll[i].IP=Marshal.AllocHGlobal(Marshal.SizeOf(rcInfos[i].IP.ToCharArray()));
+                    rcInfos2dll[i].IP=Marshal.StringToHGlobalUni(rcInfos[i].IP);
+                    rcInfos2dll[i].Port=rcInfos[i].Port;
+                    rcInfos2dll[i].RcID=rcInfos[i].RcID;
+                }
+                int res = 0;
+                fixed(RCInfo2dll *prt=&rcInfos2dll[0])
+                {
+                    res = Backstage.Backstage_Startup(prt, rcInfos2dll.Length);
+                }
+                for (int j = 0; j < rcInfos.Length; ++j)
+                {
+                    Marshal.FreeHGlobal(rcInfos2dll[j].IP);
+                }
+            }
             //创建屏幕相关静态数据对象
             m_staticValue = new StaticValue();
             BindCanvas();
@@ -104,9 +129,9 @@ namespace Robot
         private void OnTimedEvent(object sender, EventArgs e)
         {
             ///读编码器值
-//             int value = 0;
-//             Encoder.Encoder_Read(0, ref value);
-//             m_nextpos += value;
+            int value = 0;
+            Backstage.Encoder_Read(0, ref value);
+            m_nextpos += value;
             //模拟运输传送
             TargetListController.GenerateNewTarget(m_nowpos);
             //扫描并显示新的Target图形
@@ -162,7 +187,7 @@ namespace Robot
         }
         private void mainWindow_Closed(object sender, EventArgs e)
         {
-            Encoder.Encoder_Close();
+            int res = Backstage.Backstage_Shutdown();
         }
         private void Button_Start_Click(object sender, RoutedEventArgs e)
         {
@@ -176,19 +201,19 @@ namespace Robot
         }
         private void button1_Click(object sender, RoutedEventArgs e)
         {
-            Target[] targets = new Target[2];
-            targets[0].Aangle = 12.1F;
-            targets[0].EncoderValue = 213234;
-            targets[0].ID = 13;
-            targets[0].PosX = 12.4;
-            targets[0].PosY = 123.22;
-            unsafe
-            {
-                fixed(Target *ptr=&targets[0])
-                {
-                    int res = Allocater.Allocate(ptr, targets.Length);
-                }
-            }
+//             Target[] targets = new Target[1];
+//             targets[0].Aangle = 12.1F;
+//             targets[0].EncoderValue = 213234;
+//             targets[0].ID = 13;
+//             targets[0].PosX = 12.4;
+//             targets[0].PosY = 123.22;
+//             unsafe
+//             {
+//                 fixed(Target *ptr=&targets[0])
+//                 {
+//                     int res = Backstage.Allocate(ptr, targets.Length);
+//                 }
+//             }
         }
     }
 }

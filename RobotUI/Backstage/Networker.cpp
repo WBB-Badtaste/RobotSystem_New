@@ -14,95 +14,113 @@ namespace robot
 	EnHandleResult MyListener::OnClose(CONNID dwConnID)												     { return HR_IGNORE; }
 	EnHandleResult MyListener::OnError(CONNID dwConnID, EnSocketOperation enOperation, int iErrorCode)   { return HR_IGNORE; }
 
-	BACKSTAGE_API int WINAPI Networker_Start(RCInfo *pInfos,int num,WCHAR* localIP)
+	BACKSTAGE_API int WINAPI Networker_Startup(RCInfo *pInfos,int num,WCHAR* localIP)
 	{
+		if(netWorker_isStarted) return 0;
+		if (!mutex_connid) mutex_connid=CreateMutex(NULL,FALSE,NULL);
+		WaitForSingleObject(mutex_connid,INFINITE);
 		pAgent->Start(localIP);
-		//RCID一定要由1开始连号
-		pRCID2ConnID = new CONNID[num+1]();
-		ZeroMemory(pRCID2ConnID,num+1);
-		while(num-->0)
+		while(--num>=0)
 		{
-			if(!pAgent->Connect(pInfos[num-1].IP,pInfos[num-1].Port,&(pRCID2ConnID[pInfos[num-1].RcID])))
-				if(!pAgent->Connect(pInfos[num-1].IP,pInfos[num-1].Port,&(pRCID2ConnID[pInfos[num-1].RcID])))
-					if(!pAgent->Connect(pInfos[num-1].IP,pInfos[num-1].Port,&(pRCID2ConnID[pInfos[num-1].RcID])))
+			while(rcIDmatchConnID.size() <= (unsigned)pInfos[num].RcID) rcIDmatchConnID.push_back(0);
+			if(pAgent->Connect(pInfos[num].IP,pInfos[num].Port,&(rcIDmatchConnID[pInfos[num].RcID]))!=TRUE)
+				if(pAgent->Connect(pInfos[num].IP,pInfos[num].Port,&(rcIDmatchConnID[pInfos[num].RcID]))!=TRUE)
+					if(pAgent->Connect(pInfos[num].IP,pInfos[num].Port,&(rcIDmatchConnID[pInfos[num].RcID]))!=TRUE)
+					{
+						ReleaseMutex(mutex_connid);
 						return ERROR_NETWORK_CONNECT_FAILED;
+					}
 		}
+		ReleaseMutex(mutex_connid);
+		netWorker_isStarted=true;
 		return 0;
 	}
-	BACKSTAGE_API int WINAPI Networker_Stop()
+	BACKSTAGE_API int WINAPI Networker_Shutdown()
 	{
-		delete[] pRCID2ConnID;
+		if (!netWorker_isStarted) return 0;
+		WaitForSingleObject(mutex_connid,INFINITE);
+		if(pAgent->Stop()==FALSE) 
+		{
+			ReleaseMutex(mutex_connid);
+			return ERROR_NETWORK_SHUTDOWN_FAILED;
+		}
+		ReleaseMutex(mutex_connid);
+		rcIDmatchConnID.clear();
+		if (mutex_connid) CloseHandle(mutex_connid);
+		mutex_connid=0;
+		netWorker_isStarted=false;
 		return 0;
 	}
-	BACKSTAGE_API int WINAPI SendTargets(int RCID, Target *pTargets, int num)
+	BACKSTAGE_API int WINAPI Networker_SendTargets(int RCID, vector<Target> *pVecTargets)
 	{
-		//if (m_pAgent->HasStarted() == FALSE) return FALSE;
-
-		CONNID dwConnID = pRCID2ConnID[RCID];
-		if (!dwConnID) return ERROR_NETWORK_CONNECT_MISSED;
-
+		WaitForSingleObject(mutex_connid,INFINITE);
+		CONNID dwConnID = rcIDmatchConnID[RCID];
+		if (!dwConnID) 
+		{
+			ReleaseMutex(mutex_connid);
+			return ERROR_NETWORK_CONNECT_MISSED;
+		}
 		double dBuffer = 0;
 		CString sBuffer("");
 		string str("\x54");
-		sBuffer.Format(_T("%d%d"), num / 10, num % 10);
+		sBuffer.Format(_T("%d%d"), pVecTargets->size() / 10, pVecTargets->size() % 10);
 		str += (char*)sBuffer.GetBuffer();
-		for (int i = 0; i < num; --i)
+		for(vector<Target>::iterator iter=(*pVecTargets).begin();iter!=(*pVecTargets).end();++iter)
 		{
-			sBuffer.Format(_T("%d%d%d%d"), pTargets[i].ID / 1000, pTargets[i].ID / 100 % 10, pTargets[i].ID / 10 % 10, pTargets[i].ID % 10);
+			sBuffer.Format(_T("%d%d%d%d"), iter->ID / 1000, iter->ID / 100 % 10, iter->ID / 10 % 10, iter->ID % 10);
 			str += (char*)sBuffer.GetBuffer();
-			if (pTargets[i].PosX >= 0)
+			if (iter->PosX >= 0)
 			{
 				str += "\xAA";
-				dBuffer = pTargets[i].PosX;
+				dBuffer = iter->PosX;
 			}
 			else
 			{
 				str += "\x55";
-				dBuffer = -pTargets[i].PosX;
+				dBuffer = -iter->PosX;
 			}
 			sBuffer.Format(_T("%d%d%d%d%d%d"), (long)dBuffer / 1000, (long)dBuffer / 100 % 10, (long)dBuffer / 10 % 10, (long)dBuffer % 10, (long)(dBuffer / 0.1) % 10, (long)(dBuffer / 0.01) % 10);
 			str += (char*)sBuffer.GetBuffer();
-			if (pTargets[i].PosY >= 0)
+			if (iter->PosY >= 0)
 			{
 				str += "\xAA";
-				dBuffer = pTargets[i].PosY;
+				dBuffer = iter->PosY;
 			}
 			else
 			{
 				str += "\x55";
-				dBuffer = -pTargets[i].PosY;
+				dBuffer = -iter->PosY;
 			}
 			sBuffer.Format(_T("%d%d%d%d%d%d"), (long)dBuffer / 1000, (long)dBuffer / 100 % 10, (long)dBuffer / 10 % 10, (long)dBuffer % 10, (long)(dBuffer / 0.1) % 10, (long)(dBuffer / 0.01) % 10);
 			str += (char*)sBuffer.GetBuffer();
-			if (pTargets[i].Aangle >= 0)
+			if (iter->Aangle >= 0)
 			{
 				str += "\xAA";
-				dBuffer = pTargets[i].Aangle;
+				dBuffer = iter->Aangle;
 			}
 			else
 			{
 				str += "\x55";
-				dBuffer = -pTargets[i].Aangle;
+				dBuffer = -iter->Aangle;
 			}
 			sBuffer.Format(_T("%d%d%d%d"), (long)dBuffer / 100 % 10, (long)dBuffer / 10 % 10, (long)dBuffer % 10, (long)(dBuffer / 0.1) % 10);
 			str += (char*)sBuffer.GetBuffer();
-			if (pTargets[i].EncoderValue >= 0)
+			if (iter->EncoderValue >= 0)
 			{
 				str += "\xAA";
-				dBuffer = pTargets[i].EncoderValue;
+				dBuffer = iter->EncoderValue;
 			}
 			else
 			{
 				str += "\x55";
-				dBuffer = -pTargets[i].EncoderValue;
+				dBuffer = -iter->EncoderValue;
 			}
 			sBuffer.Format(_T("%d%d%d%d%d%d%d%d%d%d"), (long)dBuffer / 1000000000 % 10, (long)dBuffer / 100000000 % 10, (long)dBuffer / 10000000 % 10, (long)dBuffer / 1000000 % 10, (long)dBuffer / 100000 % 10, (long)dBuffer / 10000 % 10, (long)dBuffer / 1000, (long)dBuffer / 100 % 10, (long)dBuffer / 10 % 10, (long)dBuffer % 10);
 			str += (char*)sBuffer.GetBuffer();
 		}
-
-		Bale(str);
-
+		Bale(str);//加上包头包尾
 		pAgent->Send(dwConnID, (const BYTE*)str.c_str(), str.length());
+		ReleaseMutex(mutex_connid);
 		return TRUE;
 	}
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 #include <atlstr.h>
 #include "HPSocket.h"
 #pragma comment(lib,"HPSocket.lib")
@@ -20,9 +21,11 @@ namespace robot
 		virtual EnHandleResult OnClose(CONNID dwConnID)												     ;
 		virtual EnHandleResult OnError(CONNID dwConnID, EnSocketOperation enOperation, int iErrorCode)   ;
 	};
+	static bool netWorker_isStarted=false;
 	static MyListener listener;
 	static CTcpAgentPtr pAgent(&listener);
-	static CONNID *pRCID2ConnID=nullptr;
+	static vector<CONNID> rcIDmatchConnID;
+	static HANDLE mutex_connid=0;
 	static USHORT packetID;
 	static USHORT GeneratePacketID(){ return ++packetID; }
 	static void Bale(string &str)

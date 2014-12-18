@@ -1,12 +1,11 @@
-﻿生成启动时间为 2014/12/17 星期三 21:32:37。
+﻿生成启动时间为 2014/12/18 星期四 16:46:09。
      1>项目“E:\Github\RobotSystem_New\RobotUI\Backstage\Backstage.vcxproj”在节点 2 上(build 个目标)。
-     1>PrepareForBuild:
-         正在创建目录“E:\Github\RobotSystem_New\RobotUI\Debug\”。
-       InitializeBuildStatus:
+     1>InitializeBuildStatus:
          正在创建“Debug\Backstage.unsuccessfulbuild”，因为已指定“AlwaysCreate”。
        ClCompile:
          所有输出均为最新。
-         所有输出均为最新。
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _USRDLL /D BACKSTAGE_EXPORTS /D _WINDLL /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"StdAfx.h" /Fp"Debug\Backstage.pch" /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt Encoder.cpp
+         Encoder.cpp
          所有输出均为最新。
        ManifestResourceCompile:
          所有输出均为最新。
@@ -18,7 +17,6 @@
          Debug\Encoder.obj
          Debug\Networker.obj
          Debug\stdafx.obj
-            正在创建库 E:\Github\RobotSystem_New\RobotUI\Debug\Backstage.lib 和对象 E:\Github\RobotSystem_New\RobotUI\Debug\Backstage.exp
        Manifest:
          C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /out:"Debug\Backstage.dll.embed.manifest" /manifest Debug\Backstage.dll.intermediate.manifest
          所有输出均为最新。
@@ -32,4 +30,4 @@
 
 生成成功。
 
-已用时间 00:00:01.25
+已用时间 00:00:02.05

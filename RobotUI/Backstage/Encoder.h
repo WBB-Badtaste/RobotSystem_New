@@ -6,6 +6,6 @@
 namespace robot
 {
 	static I32 g_CardID = 0;
-	static BOOL g_bStarted = FALSE;
 	static HANDLE g_mutex = CreateMutex(NULL,FALSE,NULL);
+	static bool encoder_isStarted=false;
 }

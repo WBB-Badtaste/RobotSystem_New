@@ -1,9 +1,18 @@
 #pragma once
 
+#include <string>
 #include <vector>
+#include "Helper.h"
+#include "BackstageInterface.h"
 
 namespace robot
 {
-	static std::vector<int> vecRC;
-	static int lastAllocatingRC=0;
+	using namespace std;
+
+	static int index_RC=0;
+	static vector<Target> vecNewTargets;
+	static vector<AllocatedInfo> vecAllocatedInfos;
+	static HANDLE mutex_newTarget=0;
+	static HANDLE hThreadAllocate=0;
+	static bool allocater_isStarted=false;
 }

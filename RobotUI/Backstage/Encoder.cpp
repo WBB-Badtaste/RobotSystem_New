@@ -7,10 +7,10 @@
 
 namespace robot
 {
-	BACKSTAGE_API int WINAPI Encoder_StartUp()
+	BACKSTAGE_API int WINAPI Encoder_Startup()
 	{
+		if (encoder_isStarted) return 0;
 		WaitForSingleObject(g_mutex, INFINITE);
-		if (g_bStarted) goto T;
 		p9014_close();
 		I32 CardCount = 0;
 		if (p9014_initial(&CardCount, &g_CardID)) goto F;
@@ -22,22 +22,23 @@ namespace robot
 		if (p9014_set_pos(g_CardID * 4 + 1, 1, 0)) goto F;
 		if (p9014_set_pos(g_CardID * 4 + 2, 1, 0)) goto F;
 		if (p9014_set_pos(g_CardID * 4 + 3, 1, 0)) goto F;
-		g_bStarted = TRUE;
-T:		ReleaseMutex(g_mutex);
+		ReleaseMutex(g_mutex);
+		encoder_isStarted=true;
 		return 0;
 F:		ReleaseMutex(g_mutex);
 		return 1;
 	}
-	BACKSTAGE_API int WINAPI Encoder_Close()
+	BACKSTAGE_API int WINAPI Encoder_Shutdown()
 	{
+		if(!encoder_isStarted) return 0;
 		WaitForSingleObject(g_mutex, INFINITE);
 		if (p9014_close())
 		{
 			ReleaseMutex(g_mutex);
 			return 1;
 		}
-		g_bStarted = FALSE;
 		ReleaseMutex(g_mutex);
+		encoder_isStarted = false;
 		return 0;
 	}
 	BACKSTAGE_API int WINAPI Encoder_Read(int axis_no,int *value)
