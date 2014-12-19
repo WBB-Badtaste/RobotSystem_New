@@ -28,17 +28,19 @@ namespace Robot
     };
     class Backstage
     {
-        [DllImport("Backstage.dll", EntryPoint = "Backstage_Startup")]
-        unsafe public extern static int Backstage_Startup(RCInfo2dll* pInfos, int infoCount);
-        [DllImport("Backstage.dll", EntryPoint = "Backstage_Shutdown")]
+        [DllImport("Backstage.dll", EntryPoint = "Backstage_Startup", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Unicode)]
+        unsafe public extern static int Backstage_Startup(RCInfo2dll* pInfos, int infoCount,IntPtr localIP);
+        [DllImport("Backstage.dll", EntryPoint = "Backstage_Shutdown", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Unicode)]
         public extern static int Backstage_Shutdown();
         //Encoder
-        [DllImport("Backstage.dll", EntryPoint = "Encoder_Read")]
+        [DllImport("Backstage.dll", EntryPoint = "Encoder_Read", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Unicode)]
         public extern static int Encoder_Read(int axis_no, ref int value);
         //Networker
-
         //Allocater
-        [DllImport("Backstage.dll", EntryPoint = "Allocater_AddNewTargets")]
+        [DllImport("Backstage.dll", EntryPoint = "Allocater_AddNewTargets", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Unicode)]
         unsafe public extern static int Allocater_AddNewTargets(Target *targets,int num);
+        //test
+        [DllImport("Backstage.dll", EntryPoint = "Test")]
+        public extern static int Test();
     }
 }

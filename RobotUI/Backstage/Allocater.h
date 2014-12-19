@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <atlstr.h>
 #include "Helper.h"
 #include "BackstageInterface.h"
 

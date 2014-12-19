@@ -14,19 +14,25 @@ namespace robot
 	EnHandleResult MyListener::OnClose(CONNID dwConnID)												     { return HR_IGNORE; }
 	EnHandleResult MyListener::OnError(CONNID dwConnID, EnSocketOperation enOperation, int iErrorCode)   { return HR_IGNORE; }
 
-	BACKSTAGE_API int WINAPI Networker_Startup(RCInfo *pInfos,int num,WCHAR* localIP)
+	BACKSTAGE_API int WINAPI Networker_Startup(RCInfo *pInfos,int num,LPCTSTR localIP)
 	{
+		 
 		if(netWorker_isStarted) return 0;
 		if (!mutex_connid) mutex_connid=CreateMutex(NULL,FALSE,NULL);
 		WaitForSingleObject(mutex_connid,INFINITE);
-		pAgent->Start(localIP);
+ 		if(pAgent->Start(localIP,FALSE)==FALSE)
+ 		{
+ 			DWORD res=GetLastError();
+ 		}
+		CONNID id=0;
 		while(--num>=0)
 		{
 			while(rcIDmatchConnID.size() <= (unsigned)pInfos[num].RcID) rcIDmatchConnID.push_back(0);
-			if(pAgent->Connect(pInfos[num].IP,pInfos[num].Port,&(rcIDmatchConnID[pInfos[num].RcID]))!=TRUE)
-				if(pAgent->Connect(pInfos[num].IP,pInfos[num].Port,&(rcIDmatchConnID[pInfos[num].RcID]))!=TRUE)
-					if(pAgent->Connect(pInfos[num].IP,pInfos[num].Port,&(rcIDmatchConnID[pInfos[num].RcID]))!=TRUE)
+			if(pAgent->Connect(_T("192.168.1.123"),60000,&id)==FALSE)
+				if(pAgent->Connect((LPCTSTR)pInfos[num].IP,(USHORT)pInfos[num].Port,&(rcIDmatchConnID[pInfos[num].RcID]))==FALSE)
+					if(pAgent->Connect((LPCTSTR)pInfos[num].IP,(USHORT)pInfos[num].Port,&(rcIDmatchConnID[pInfos[num].RcID]))==FALSE)
 					{
+						DWORD res=GetLastError();
 						ReleaseMutex(mutex_connid);
 						return ERROR_NETWORK_CONNECT_FAILED;
 					}

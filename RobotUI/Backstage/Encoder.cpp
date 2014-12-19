@@ -7,26 +7,33 @@
 
 namespace robot
 {
+	
 	BACKSTAGE_API int WINAPI Encoder_Startup()
 	{
 		if (encoder_isStarted) return 0;
 		WaitForSingleObject(g_mutex, INFINITE);
-		p9014_close();
+		encoderRes=p9014_close();
 		I32 CardCount = 0;
-		if (p9014_initial(&CardCount, &g_CardID)) goto F;
-		if (p9014_set_pls_iptmode(g_CardID * 4 + 0, 0)) goto F;
-		if (p9014_set_pls_iptmode(g_CardID * 4 + 1, 0)) goto F;
-		if (p9014_set_pls_iptmode(g_CardID * 4 + 2, 0)) goto F;
-		if (p9014_set_pls_iptmode(g_CardID * 4 + 3, 0)) goto F;
-		if (p9014_set_pos(g_CardID * 4 + 0, 1, 0)) goto F;
-		if (p9014_set_pos(g_CardID * 4 + 1, 1, 0)) goto F;
-		if (p9014_set_pos(g_CardID * 4 + 2, 1, 0)) goto F;
-		if (p9014_set_pos(g_CardID * 4 + 3, 1, 0)) goto F;
+		encoderRes=p9014_initial(&CardCount, cardIDs);
+		if (CardCount<=0) 
+		{
+			ReleaseMutex(g_mutex);
+			return ERROR_ENCODER_STARTUP_MISSPCI9014;
+		}
+		while(CardCount-->0)
+		{
+			encoderRes=p9014_set_pls_iptmode(cardIDs[CardCount] * 4 + 0, 0);
+			encoderRes=p9014_set_pls_iptmode(cardIDs[CardCount] * 4 + 1, 0);
+			encoderRes=p9014_set_pls_iptmode(cardIDs[CardCount] * 4 + 2, 0);
+			encoderRes=p9014_set_pls_iptmode(cardIDs[CardCount] * 4 + 3, 0);
+			encoderRes=p9014_set_pos(cardIDs[CardCount] * 4 + 0, 1, 0);
+			encoderRes=p9014_set_pos(cardIDs[CardCount] * 4 + 1, 1, 0);
+			encoderRes=p9014_set_pos(cardIDs[CardCount] * 4 + 2, 1, 0);
+			encoderRes=p9014_set_pos(cardIDs[CardCount] * 4 + 3, 1, 0);
+		}
 		ReleaseMutex(g_mutex);
 		encoder_isStarted=true;
 		return 0;
-F:		ReleaseMutex(g_mutex);
-		return 1;
 	}
 	BACKSTAGE_API int WINAPI Encoder_Shutdown()
 	{
@@ -43,8 +50,9 @@ F:		ReleaseMutex(g_mutex);
 	}
 	BACKSTAGE_API int WINAPI Encoder_Read(int axis_no,int *value)
 	{
+		if (!encoder_isStarted)	return ERROR_ENCODER_STARTUP_FAILED;
 		WaitForSingleObject(g_mutex, INFINITE);
-		if (p9014_get_pos(g_CardID * 4 + axis_no, 1, value))
+		if (p9014_get_pos(cardIDs[0] * 4 + axis_no, 1, value))
 		{
 			ReleaseMutex(g_mutex);
 			return 1;

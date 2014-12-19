@@ -5,7 +5,8 @@
 
 namespace robot
 {
-	static I32 g_CardID = 0;
+	static I32 cardIDs[10];
+	static I32 encoderRes=0;
 	static HANDLE g_mutex = CreateMutex(NULL,FALSE,NULL);
 	static bool encoder_isStarted=false;
 }

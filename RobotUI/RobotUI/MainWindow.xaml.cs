@@ -34,38 +34,8 @@ namespace Robot
         {
             InitializeComponent();
 
-//             //初始化Encoder
-//             int res = Encoder.Encoder_StartUp();
-//             //初始化通讯模块
-//             network = new Network();
-//             network.Connect("127.0.0.1", 60000, 1);
-//             //初始化分配模块
-//             Allocater.Start(new int[]{1},1);
-            //初始化DLL
-            RCInfo[] rcInfos = new RCInfo[1];
-            rcInfos[0].RcID=1;
-            rcInfos[0].IP="127.0.0.1";
-            rcInfos[0].Port=60000;
-            unsafe
-            {
-                RCInfo2dll[] rcInfos2dll =new RCInfo2dll[rcInfos.Length];
-                for(int i=0;i<rcInfos.Length;++i )
-                {
-                    rcInfos2dll[i].IP=Marshal.AllocHGlobal(Marshal.SizeOf(rcInfos[i].IP.ToCharArray()));
-                    rcInfos2dll[i].IP=Marshal.StringToHGlobalUni(rcInfos[i].IP);
-                    rcInfos2dll[i].Port=rcInfos[i].Port;
-                    rcInfos2dll[i].RcID=rcInfos[i].RcID;
-                }
-                int res = 0;
-                fixed(RCInfo2dll *prt=&rcInfos2dll[0])
-                {
-                    res = Backstage.Backstage_Startup(prt, rcInfos2dll.Length);
-                }
-                for (int j = 0; j < rcInfos.Length; ++j)
-                {
-                    Marshal.FreeHGlobal(rcInfos2dll[j].IP);
-                }
-            }
+            //创建一个target
+            TargetListController.GenerateNewTarget(m_nowpos);
             //创建屏幕相关静态数据对象
             m_staticValue = new StaticValue();
             BindCanvas();
@@ -126,14 +96,17 @@ namespace Robot
             m_dispatcherTimer.Interval = TimeSpan.FromMilliseconds(m_staticValue.RefreshTime);
             m_dispatcherTimer.Start();
         }
+        static int lastEncoderValue=0;
         private void OnTimedEvent(object sender, EventArgs e)
         {
             ///读编码器值
-            int value = 0;
-            Backstage.Encoder_Read(0, ref value);
-            m_nextpos += value;
+            int nextEncoderValue = 0;
+            Backstage.Encoder_Read(0, ref nextEncoderValue);
+            if (lastEncoderValue == nextEncoderValue) return;
+            m_nextpos += (nextEncoderValue - lastEncoderValue);
+            lastEncoderValue = nextEncoderValue;
             //模拟运输传送
-            TargetListController.GenerateNewTarget(m_nowpos);
+/*            TargetListController.GenerateNewTarget(m_nowpos);*/
             //扫描并显示新的Target图形
             TargetListController.Draw(DrawTarget);
             //移动Targets
@@ -201,6 +174,37 @@ namespace Robot
         }
         private void button1_Click(object sender, RoutedEventArgs e)
         {
+            //初始化DLL
+            RCInfo[] rcInfos = new RCInfo[1];
+            rcInfos[0].RcID = 1;
+            rcInfos[0].IP = "127.0.0.1";
+            rcInfos[0].Port = 60000;
+            unsafe
+            {
+                RCInfo2dll[] rcInfos2dll = new RCInfo2dll[rcInfos.Length];
+                for (int i = 0; i < rcInfos.Length; ++i)
+                {
+                    rcInfos2dll[i].IP = new IntPtr();
+                    rcInfos2dll[i].IP = Marshal.AllocHGlobal(rcInfos[i].IP.Length);
+                    rcInfos2dll[i].IP = Marshal.StringToHGlobalUni(rcInfos[i].IP);
+                    rcInfos2dll[i].Port = rcInfos[i].Port;
+                    rcInfos2dll[i].RcID = rcInfos[i].RcID;
+                }
+                int res = 0;
+                string localIp = "127.0.0.1";
+                fixed (RCInfo2dll* prt = &rcInfos2dll[0])
+                {
+                    IntPtr iPtr = new IntPtr();
+                    iPtr = Marshal.AllocHGlobal(localIp.Length);
+                    iPtr = Marshal.StringToHGlobalUni(localIp);
+                    res = Backstage.Backstage_Startup(prt, rcInfos2dll.Length, iPtr);
+                    Marshal.FreeHGlobal(iPtr);
+                }
+                for (int j = 0; j < rcInfos.Length; ++j)
+                {
+                    Marshal.FreeHGlobal(rcInfos2dll[j].IP);
+                }
+            }
 //             Target[] targets = new Target[1];
 //             targets[0].Aangle = 12.1F;
 //             targets[0].EncoderValue = 213234;

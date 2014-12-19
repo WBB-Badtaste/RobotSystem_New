@@ -9,7 +9,6 @@
 namespace robot
 {
 	using namespace std;
-
 	class MyListener:public ITcpAgentListener
 	{
 		virtual EnHandleResult OnReceive(CONNID dwConnID, int iLength)								     ;
