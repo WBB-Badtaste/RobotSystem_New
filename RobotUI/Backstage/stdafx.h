@@ -15,3 +15,6 @@
 
 // TODO: 在此处引用程序需要的其他头文件
 
+#include "Allocater.h"
+#include "Networker.h"
+#include "Encoder.h"

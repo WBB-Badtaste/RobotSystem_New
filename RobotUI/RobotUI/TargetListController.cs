@@ -75,16 +75,5 @@ namespace Robot
                 MakeDelegate(index);
             }
         }
-        //暂时使用
-        public static void GenerateNewTarget(int nowpos)
-        {
-            Target newTarget = new Target();
-            newTarget.Aangle = 0;
-            newTarget.EncoderValue = nowpos;
-            newTarget.PosX = 0;
-            newTarget.PosY = 0;
-            newTarget.ID = 0;
-            staticNewTargets.Add(newTarget);
-        }
     }
 }

@@ -2,7 +2,6 @@
 //   线程安全
 
 #include "stdafx.h"
-#include "Encoder.h"
 #include "BackstageInterface.h"
 
 namespace robot
@@ -22,14 +21,14 @@ namespace robot
 		}
 		while(CardCount-->0)
 		{
-			encoderRes=p9014_set_pls_iptmode(cardIDs[CardCount] * 4 + 0, 0);
-			encoderRes=p9014_set_pls_iptmode(cardIDs[CardCount] * 4 + 1, 0);
-			encoderRes=p9014_set_pls_iptmode(cardIDs[CardCount] * 4 + 2, 0);
-			encoderRes=p9014_set_pls_iptmode(cardIDs[CardCount] * 4 + 3, 0);
-			encoderRes=p9014_set_pos(cardIDs[CardCount] * 4 + 0, 1, 0);
-			encoderRes=p9014_set_pos(cardIDs[CardCount] * 4 + 1, 1, 0);
-			encoderRes=p9014_set_pos(cardIDs[CardCount] * 4 + 2, 1, 0);
-			encoderRes=p9014_set_pos(cardIDs[CardCount] * 4 + 3, 1, 0);
+			encoderRes = p9014_set_pls_iptmode(cardIDs[CardCount] * 4 + 0, 0);
+			encoderRes = p9014_set_pls_iptmode(cardIDs[CardCount] * 4 + 1, 0);
+			encoderRes = p9014_set_pls_iptmode(cardIDs[CardCount] * 4 + 2, 0);
+			encoderRes = p9014_set_pls_iptmode(cardIDs[CardCount] * 4 + 3, 0);
+			encoderRes = p9014_set_pos(cardIDs[CardCount] * 4 + 0, 1, 0);
+			encoderRes = p9014_set_pos(cardIDs[CardCount] * 4 + 1, 1, 0);
+			encoderRes = p9014_set_pos(cardIDs[CardCount] * 4 + 2, 1, 0);
+			encoderRes = p9014_set_pos(cardIDs[CardCount] * 4 + 3, 1, 0);
 		}
 		ReleaseMutex(g_mutex);
 		encoder_isStarted=true;

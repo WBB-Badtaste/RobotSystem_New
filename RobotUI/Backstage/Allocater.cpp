@@ -2,7 +2,6 @@
 //
 
 #include "stdafx.h"
-#include "Allocater.h"
 #include "BackstageInterface.h"
 
 namespace robot
@@ -23,23 +22,26 @@ namespace robot
 	BACKSTAGE_API int WINAPI Allocater_Shutdown()
 	{
 		if(!allocater_isStarted) return 0;
-		switch(WaitForSingleObject(hThreadAllocate,1000))
+		if(hThreadAllocate)
 		{
-		case WAIT_FAILED:
-			return ERROR_ALLOCATE_SHUTDOWN_FAILED;
-			break;
-		case WAIT_OBJECT_0:
-			CloseHandle(hThreadAllocate);
-			CloseHandle(mutex_newTarget);
-			break;
-		case WAIT_TIMEOUT:
-			return ERROR_ALLOCATE_SHUTDOWN_TIMEOUT;
-			break;
-		case WAIT_ABANDONED:
-			return ERROR_ALLOCATE_SHUTDOWN_ABANDONED;
-			break;
-		default:
-			break;
+			switch(WaitForSingleObject(hThreadAllocate,1000))
+			{
+			case WAIT_FAILED:
+				return ERROR_ALLOCATE_SHUTDOWN_FAILED;
+				break;
+			case WAIT_OBJECT_0:
+				CloseHandle(hThreadAllocate);
+				CloseHandle(mutex_newTarget);
+				break;
+			case WAIT_TIMEOUT:
+				return ERROR_ALLOCATE_SHUTDOWN_TIMEOUT;
+				break;
+			case WAIT_ABANDONED:
+				return ERROR_ALLOCATE_SHUTDOWN_ABANDONED;
+				break;
+			default:
+				break;
+			}
 		}
 		allocater_isStarted=false;
 		return 0;

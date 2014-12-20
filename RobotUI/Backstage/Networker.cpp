@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#include "Networker.h"
 #include "BackstageInterface.h"
 
 namespace robot
@@ -24,11 +23,10 @@ namespace robot
  		{
  			DWORD res=GetLastError();
  		}
-		CONNID id=0;
 		while(--num>=0)
 		{
 			while(rcIDmatchConnID.size() <= (unsigned)pInfos[num].RcID) rcIDmatchConnID.push_back(0);
-			if(pAgent->Connect(_T("192.168.1.123"),60000,&id)==FALSE)
+			if(pAgent->Connect((LPCTSTR)pInfos[num].IP,(USHORT)pInfos[num].Port,&(rcIDmatchConnID[pInfos[num].RcID]))==FALSE)
 				if(pAgent->Connect((LPCTSTR)pInfos[num].IP,(USHORT)pInfos[num].Port,&(rcIDmatchConnID[pInfos[num].RcID]))==FALSE)
 					if(pAgent->Connect((LPCTSTR)pInfos[num].IP,(USHORT)pInfos[num].Port,&(rcIDmatchConnID[pInfos[num].RcID]))==FALSE)
 					{
@@ -57,7 +55,7 @@ namespace robot
 		netWorker_isStarted=false;
 		return 0;
 	}
-	BACKSTAGE_API int WINAPI Networker_SendTargets(int RCID, vector<Target> *pVecTargets)
+	int Networker_SendTargets(int RCID, vector<Target> *pVecTargets)
 	{
 		WaitForSingleObject(mutex_connid,INFINITE);
 		CONNID dwConnID = rcIDmatchConnID[RCID];

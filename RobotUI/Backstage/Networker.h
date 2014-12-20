@@ -4,7 +4,7 @@
 #include <vector>
 #include <atlstr.h>
 #include "HPSocket.h"
-#pragma comment(lib,"HPSocket.lib")
+#pragma comment(lib,"HPSocket_U.lib")
 
 namespace robot
 {
@@ -43,4 +43,5 @@ namespace robot
 		str = sBuffer;
 		str += "\xFF\xFF\x03";
 	}	
+	int Networker_SendTargets(int RCID, vector<Target> *pVecTargets);
 }

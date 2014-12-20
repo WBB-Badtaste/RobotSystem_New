@@ -8,7 +8,7 @@
 
 
 #include "ErrorInfos.h"
-#include <vector>
+
 
 namespace robot
 {
@@ -43,7 +43,4 @@ namespace robot
 	//通讯相关接口
 	EXTERN_C BACKSTAGE_API int WINAPI Networker_Startup(RCInfo *pInfos,int num,LPCTSTR localIP);
 	EXTERN_C BACKSTAGE_API int WINAPI Networker_Shutdown();
-	EXTERN_C BACKSTAGE_API int WINAPI Networker_SendTargets(int RCID, vector<Target> *pVecTargets);
-	//测试
-	EXTERN_C BACKSTAGE_API int WINAPI Test();
 }

@@ -39,8 +39,5 @@ namespace Robot
         //Allocater
         [DllImport("Backstage.dll", EntryPoint = "Allocater_AddNewTargets", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Unicode)]
         unsafe public extern static int Allocater_AddNewTargets(Target *targets,int num);
-        //test
-        [DllImport("Backstage.dll", EntryPoint = "Test")]
-        public extern static int Test();
     }
 }

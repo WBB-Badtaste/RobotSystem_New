@@ -29,10 +29,5 @@ namespace robot
 		if(res!=0)return res;
 		return 0;
 	}
-	BACKSTAGE_API int WINAPI Test()
-	{
-		res=100;
-		return 0;
-	}
 }
 
