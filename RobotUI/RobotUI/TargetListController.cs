@@ -23,12 +23,8 @@ namespace Robot
     class TargetListController
     {
         private static List<Target> staticNewTargets = new List<Target>();//视觉系统新捕抓到的目标
-
         private static List<TargetUI> staticStuffTargets = new List<TargetUI>();//显示在界面送料带上
-
         private static List<int> staticCatchedTargetIDs = new List<int>();//被抓取的目标
-
-        //        private static List<Target> m_boxTargets = new List<Target>();//显示在界面进箱带上
         public static void AddNewTarget(Target targrt)
         {
             staticNewTargets.Add(targrt);
@@ -37,7 +33,8 @@ namespace Robot
         { 
             staticCatchedTargetIDs.Add(id);
         }
-        public static bool DealWithCatchedTargets()
+        public delegate bool DelUIElement(UIElement element);
+        public static bool DealWithCatchedTargets(DelUIElement DelElement)
         {
             bool res = true;
             while (staticCatchedTargetIDs.Count() > 0)
@@ -46,6 +43,8 @@ namespace Robot
                 {
                     if (staticStuffTargets[i].Target.ID == staticCatchedTargetIDs[0])
                     {
+                        DelElement(staticStuffTargets[i].UIElement);
+                        staticStuffTargets.RemoveAt(i);
                         staticCatchedTargetIDs.RemoveAt(0);
                         break;
                     }
@@ -55,40 +54,6 @@ namespace Robot
             }
             return res;
         }
-//         public static void AddDisplayTarget(TargetUI targetUI)
-//         {
-//             staticStuffTargets.Add(targetUI);
-//         }
-//         public static bool GetNewTarget(int index, out TargetUI targetUI)
-//         {
-//             Target target = staticNewTargets[index];
-//             targetUI = new TargetUI(target);
-//             //转存到已显示的队列
-//             targetUI = new TargetUI(target);
-//             TargetListController.AddDisplayTarget(targetUI);
-//             staticNewTargets.RemoveAt(index);
-//             return true;
-//         }
-//         public static void GetDisplayTarget(int index, out TargetUI target)
-//         {
-//             target = staticStuffTargets[index];
-//         }
-//         public static void DelNewTarget(int index)
-//         {
-//             staticNewTargets.RemoveAt(index);
-//         }
-//         public static bool DelDisplayTarget(int targetID)
-//         {
-//             for (int i = 0; i < staticStuffTargets.Count(); ++i)
-//             {
-//                 if (staticStuffTargets[i].Target.ID == targetID)
-//                 {
-//                     staticStuffTargets.RemoveAt(i);
-//                     return true;
-//                 }
-//             }
-//             return false;
-//         }
         public delegate bool MoveDelegate(IEnumerator<TargetUI> ie);
         public static void Move(MoveDelegate MakeDelegate)
         {
@@ -97,13 +62,6 @@ namespace Robot
             {
                 MakeDelegate(ie);
             }
-//             if (staticStuffTargets.Count() <= 0) return;
-//             for (int index = 0; index < staticStuffTargets.Count(); )
-//             {
-//                 //超出画布范围后，当前target被删除，之后的target向前移位
-//                 if (MakeDelegate(index))
-//                     ++index;
-//             }
         }
         public delegate bool DrawDelegate(ref TargetUI targetUI);
         public static void Draw(DrawDelegate MakeDelegate)

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include <vector>
+#include <map>
 #include <sstream>
 #include "HPSocket.h"
 #pragma comment(lib,"HPSocket_U.lib")
@@ -23,10 +23,13 @@ namespace robot
 	static bool netWorker_isStarted=false;
 	static MyListener listener;
 	static CTcpAgentPtr pAgent(&listener);
-	static vector<CONNID> rcIDmatchConnID;
+	static map<int,CONNID> RCID_CONNID;
+	static map<CONNID,int> CONNID_RCID;
 	static HANDLE mutex_connid=0;
 	static USHORT packetID;
 	static USHORT GeneratePacketID(){ return ++packetID; }
+	static vector<HANDLE> hReceiveThreads;
+	static int catchedTargetIDs[100];
 	static void Bale(string &str)
 	{
 		string sBuffer("\x02");
@@ -44,4 +47,10 @@ namespace robot
 		str += "\xFF\xFF\x03";
 	}	
 	int Networker_SendTargets(int RCID, vector<Target> *pVecTargets);
+	struct ReceiveThreadInfo
+	{
+		CONNID connID;
+		BYTE *data;
+		int dataLen;
+	};
 }

@@ -13,7 +13,6 @@
 namespace robot
 {
 	using namespace std;
-
 	//任务结构体
 	struct Target
 	{
@@ -38,8 +37,6 @@ namespace robot
 	typedef int (WINAPI *CB2UI_NEWTARGET)(Target *targets,int num);
 	typedef int (WINAPI *CB2UI_CATCHTARGET)(int *targetIDs,int num);
 	EXTERN_C BACKSTAGE_API int WINAPI Backstage_SetCallback(CB2UI_NEWTARGET func1,CB2UI_CATCHTARGET func2);
-
-
 	//编码器相关接口
 	EXTERN_C BACKSTAGE_API int WINAPI Encoder_Startup();
 	EXTERN_C BACKSTAGE_API int WINAPI Encoder_Shutdown();

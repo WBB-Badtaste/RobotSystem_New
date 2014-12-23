@@ -104,8 +104,9 @@ namespace Robot
         {
             //扫描并显示新的Target图形
             TargetListController.Draw(DrawTarget);
-            //
-            ///读编码器值
+            //处理已抓取的Target
+            TargetListController.DealWithCatchedTargets(DelTarget);
+            //读编码器值
             int nextEncoderValue = 0;
             Backstage.Encoder_Read(0, ref nextEncoderValue);
             if (lastEncoderValue == nextEncoderValue) return;
@@ -117,17 +118,13 @@ namespace Robot
         }
         private bool MoveTarget(IEnumerator<TargetUI> ie)
         {
-//              TargetUI targetUI;
-//              TargetListController.GetDisplayTarget(index, out targetUI);
-//             if ((m_nextpos - targetUI.Target.EncoderValue) * m_staticValue.StuffEncoderRate > m_staticValue.StuffConveyorLength - m_staticValue.TargetRadius //超出画布右侧
-//                 || (m_nextpos - targetUI.Target.EncoderValue) < 0)//超出画布左侧
-//             {
-//                 canvas2D.Children.Remove(targetUI.UIElement);
-//                 TargetListController.DelDisplayTarget(index);
-//                 return false;
-//             }
             m_daMove.By = (m_nextpos - m_nowpos) * m_staticValue.StuffEncoderRate / m_staticValue.ScreenRate * m_staticValue.ZoomRate;
             ie.Current.TT.BeginAnimation(TranslateTransform.XProperty, m_daMove);
+            return true;
+        }
+        private bool DelTarget(UIElement element)
+        {
+            canvas2D.Children.Remove(element);
             return true;
         }
         private bool DrawTarget(ref TargetUI targetUI)
@@ -172,7 +169,6 @@ namespace Robot
             if (m_statusValue.WorkStatus == enWorkStatus.SUSPEND) m_statusValue.WorkStatus = enWorkStatus.STARTED;
             else if (m_statusValue.WorkStatus == enWorkStatus.STARTED) m_statusValue.WorkStatus = enWorkStatus.SUSPEND;
         }
-        
         private void button1_Click(object sender, RoutedEventArgs e)
         {
             Target[] targets = new Target[4];
