@@ -20,9 +20,9 @@ namespace Robot
     /// <summary>
     /// MainWindow.xaml 的交互逻辑
     /// </summary>
+    /// 
     public partial class MainWindow : Window
     {
-
         //运行数据对象
         private StaticValue m_staticValue;
         private StatusValue m_statusValue;
@@ -34,36 +34,7 @@ namespace Robot
         {
             InitializeComponent();
             //初始化DLL
-            RCInfo[] rcInfos = new RCInfo[1];
-            rcInfos[0].RcID = 1;
-            rcInfos[0].IP = "127.0.0.1";
-            rcInfos[0].Port = 60000;
-            unsafe
-            {
-                RCInfo2dll[] rcInfos2dll = new RCInfo2dll[rcInfos.Length];
-                for (int i = 0; i < rcInfos.Length; ++i)
-                {
-                    rcInfos2dll[i].IP = new IntPtr();
-                    rcInfos2dll[i].IP = Marshal.AllocHGlobal(rcInfos[i].IP.Length);
-                    rcInfos2dll[i].IP = Marshal.StringToHGlobalUni(rcInfos[i].IP);
-                    rcInfos2dll[i].Port = rcInfos[i].Port;
-                    rcInfos2dll[i].RcID = rcInfos[i].RcID;
-                }
-                int res = 0;
-                string localIp = "127.0.0.1";
-                fixed (RCInfo2dll* prt = &rcInfos2dll[0])
-                {
-                    IntPtr iPtr = new IntPtr();
-                    iPtr = Marshal.AllocHGlobal(localIp.Length);
-                    iPtr = Marshal.StringToHGlobalUni(localIp);
-                    res = Backstage.Backstage_Startup(prt, rcInfos2dll.Length, iPtr);
-                    Marshal.FreeHGlobal(iPtr);
-                }
-                for (int j = 0; j < rcInfos.Length; ++j)
-                {
-                    Marshal.FreeHGlobal(rcInfos2dll[j].IP);
-                }
-            }
+            BackstageOper.StartupBackstage();
             //创建屏幕相关静态数据对象
             m_staticValue = new StaticValue();
             BindCanvas();
@@ -128,40 +99,39 @@ namespace Robot
             m_dispatcherTimer.Interval = TimeSpan.FromMilliseconds(m_staticValue.RefreshTime);
             m_dispatcherTimer.Start();
         }
-        static int lastEncoderValue=0;
+        static int lastEncoderValue = 0;
         private void OnTimedEvent(object sender, EventArgs e)
         {
+            //扫描并显示新的Target图形
+            TargetListController.Draw(DrawTarget);
+            //
             ///读编码器值
             int nextEncoderValue = 0;
             Backstage.Encoder_Read(0, ref nextEncoderValue);
             if (lastEncoderValue == nextEncoderValue) return;
             m_nextpos += (nextEncoderValue - lastEncoderValue);
             lastEncoderValue = nextEncoderValue;
-            //扫描并显示新的Target图形
-            TargetListController.Draw(DrawTarget);
             //移动Targets
             TargetListController.Move(MoveTarget);
             m_nowpos = m_nextpos;
         }
-        private bool MoveTarget(int index)
+        private bool MoveTarget(IEnumerator<TargetUI> ie)
         {
-            TargetUI targetUI;
-            TargetListController.GetDisplayTarget(index, out targetUI);
-            if ((m_nextpos - targetUI.Target.EncoderValue) * m_staticValue.StuffEncoderRate > m_staticValue.StuffConveyorLength - m_staticValue.TargetRadius //超出画布右侧
-                || (m_nextpos - targetUI.Target.EncoderValue) < 0)//超出画布左侧
-            {
-                canvas2D.Children.Remove(targetUI.UIElement);
-                TargetListController.DelDisplayTarget(index);
-                return false;
-            }
+//              TargetUI targetUI;
+//              TargetListController.GetDisplayTarget(index, out targetUI);
+//             if ((m_nextpos - targetUI.Target.EncoderValue) * m_staticValue.StuffEncoderRate > m_staticValue.StuffConveyorLength - m_staticValue.TargetRadius //超出画布右侧
+//                 || (m_nextpos - targetUI.Target.EncoderValue) < 0)//超出画布左侧
+//             {
+//                 canvas2D.Children.Remove(targetUI.UIElement);
+//                 TargetListController.DelDisplayTarget(index);
+//                 return false;
+//             }
             m_daMove.By = (m_nextpos - m_nowpos) * m_staticValue.StuffEncoderRate / m_staticValue.ScreenRate * m_staticValue.ZoomRate;
-            targetUI.TT.BeginAnimation(TranslateTransform.XProperty, m_daMove);
+            ie.Current.TT.BeginAnimation(TranslateTransform.XProperty, m_daMove);
             return true;
         }
-        private bool DrawTarget(int index)
+        private bool DrawTarget(ref TargetUI targetUI)
         {
-            TargetUI targetUI;
-            TargetListController.GetNewTarget(index, out targetUI);
             Ellipse eNewTarget = new Ellipse();
             //设置大小
             BindTarget(eNewTarget);
@@ -202,21 +172,37 @@ namespace Robot
             if (m_statusValue.WorkStatus == enWorkStatus.SUSPEND) m_statusValue.WorkStatus = enWorkStatus.STARTED;
             else if (m_statusValue.WorkStatus == enWorkStatus.STARTED) m_statusValue.WorkStatus = enWorkStatus.SUSPEND;
         }
+        
         private void button1_Click(object sender, RoutedEventArgs e)
         {
-             Target[] targets = new Target[1];
-             targets[0].Aangle = 12.1F;
-             targets[0].EncoderValue = 213234;
-             targets[0].ID = 13;
-             targets[0].PosX = 12.4;
-             targets[0].PosY = 123.22;
-             unsafe
-             {
-                 fixed(Target *ptr=&targets[0])
-                 {
-                     int res = Backstage.Allocater_AddNewTargets(ptr, targets.Length);
-                 }
-             }
+            Target[] targets = new Target[4];
+            targets[0].Aangle = 12;
+            targets[0].EncoderValue = 0;
+            targets[0].ID = 10;
+            targets[0].PosX = 123.33;
+            targets[0].PosY = 67.23;
+            targets[1].Aangle = 12.1;
+            targets[1].EncoderValue = 200;
+            targets[1].ID = 11;
+            targets[1].PosX = 83.23;
+            targets[1].PosY = 150.22;
+            targets[2].Aangle = 12.1;
+            targets[2].EncoderValue = 300;
+            targets[2].ID = 12;
+            targets[2].PosX = 69.04;
+            targets[2].PosY = 323.22;
+            targets[3].Aangle = 12.1;
+            targets[3].EncoderValue = 400;
+            targets[3].ID = 13;
+            targets[3].PosX = 0;
+            targets[3].PosY = 423.22;
+            unsafe
+            {
+                fixed (Target* p = targets)
+                {
+                    Backstage.Backstage_AddNewTargets(p, targets.Length);
+                }
+            }
         }
     }
 }

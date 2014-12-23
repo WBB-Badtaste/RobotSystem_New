@@ -65,62 +65,78 @@ namespace robot
 			return ERROR_NETWORK_CONNECT_MISSED;
 		}
 		double dBuffer = 0;
-		CString sBuffer("");
 		string str("\x54");
-		sBuffer.Format(_T("%d%d"), pVecTargets->size() / 10, pVecTargets->size() % 10);
-		str += (char*)sBuffer.GetBuffer();
+		ostringstream oss;
+		oss<<pVecTargets->size() / 10<<pVecTargets->size() % 10 ;
+		str +=oss.str();
+		oss.str("");
 		for(vector<Target>::iterator iter=(*pVecTargets).begin();iter!=(*pVecTargets).end();++iter)
 		{
-			sBuffer.Format(_T("%d%d%d%d"), iter->ID / 1000, iter->ID / 100 % 10, iter->ID / 10 % 10, iter->ID % 10);
-			str += (char*)sBuffer.GetBuffer();
+// 			sBuffer.Format(_T("%d%d%d%d"), iter->ID / 1000, iter->ID / 100 % 10, iter->ID / 10 % 10, iter->ID % 10);
+// 			str += (char*)sBuffer.GetBuffer();
+			oss<<iter->ID / 1000<<iter->ID / 100 % 10<<iter->ID / 10 % 10<<iter->ID % 10;
+			str +=oss.str();
+			oss.str("");
 			if (iter->PosX >= 0)
 			{
-				str += "\xAA";
+				str +="\xAA";
 				dBuffer = iter->PosX;
 			}
 			else
 			{
-				str += "\x55";
+				str +="\x55";
 				dBuffer = -iter->PosX;
 			}
-			sBuffer.Format(_T("%d%d%d%d%d%d"), (long)dBuffer / 1000, (long)dBuffer / 100 % 10, (long)dBuffer / 10 % 10, (long)dBuffer % 10, (long)(dBuffer / 0.1) % 10, (long)(dBuffer / 0.01) % 10);
-			str += (char*)sBuffer.GetBuffer();
+// 			sBuffer.Format(_T("%d%d%d%d%d%d"), (long)dBuffer / 1000, (long)dBuffer / 100 % 10, (long)dBuffer / 10 % 10, (long)dBuffer % 10, (long)(dBuffer / 0.1) % 10, (long)(dBuffer / 0.01) % 10);
+// 			str += (char*)sBuffer.GetBuffer();
+			oss<<(long)dBuffer / 1000<<(long)dBuffer / 100 % 10<<(long)dBuffer / 10 % 10<< (long)dBuffer % 10<<(long)(dBuffer / 0.1) % 10<<(long)(dBuffer / 0.01) % 10;
+			str +=oss.str();
+			oss.str("");
 			if (iter->PosY >= 0)
 			{
-				str += "\xAA";
+				str +="\xAA";
 				dBuffer = iter->PosY;
 			}
 			else
 			{
-				str += "\x55";
+				str +="\x55";
 				dBuffer = -iter->PosY;
 			}
-			sBuffer.Format(_T("%d%d%d%d%d%d"), (long)dBuffer / 1000, (long)dBuffer / 100 % 10, (long)dBuffer / 10 % 10, (long)dBuffer % 10, (long)(dBuffer / 0.1) % 10, (long)(dBuffer / 0.01) % 10);
-			str += (char*)sBuffer.GetBuffer();
+// 			sBuffer.Format(_T("%d%d%d%d%d%d"), (long)dBuffer / 1000, (long)dBuffer / 100 % 10, (long)dBuffer / 10 % 10, (long)dBuffer % 10, (long)(dBuffer / 0.1) % 10, (long)(dBuffer / 0.01) % 10);
+// 			str += (char*)sBuffer.GetBuffer();
+			oss<<(long)dBuffer / 1000<< (long)dBuffer / 100 % 10<< (long)dBuffer / 10 % 10<< (long)dBuffer % 10<< (long)(dBuffer / 0.1) % 10<< (long)(dBuffer / 0.01) % 10 ;
+			str +=oss.str();
+			oss.str("");
 			if (iter->Aangle >= 0)
 			{
-				str += "\xAA";
+				str +="\xAA";
 				dBuffer = iter->Aangle;
 			}
 			else
 			{
-				str += "\x55";
+				str +="\x55";
 				dBuffer = -iter->Aangle;
 			}
-			sBuffer.Format(_T("%d%d%d%d"), (long)dBuffer / 100 % 10, (long)dBuffer / 10 % 10, (long)dBuffer % 10, (long)(dBuffer / 0.1) % 10);
-			str += (char*)sBuffer.GetBuffer();
+// 			sBuffer.Format(_T("%d%d%d%d"), (long)dBuffer / 100 % 10, (long)dBuffer / 10 % 10, (long)dBuffer % 10, (long)(dBuffer / 0.1) % 10);
+// 			str += (char*)sBuffer.GetBuffer();
+			oss<<(long)dBuffer / 100 % 10<< (long)dBuffer / 10 % 10<< (long)dBuffer % 10<< (long)(dBuffer / 0.1) % 10 ;
+			str +=oss.str();
+			oss.str("");
 			if (iter->EncoderValue >= 0)
 			{
-				str += "\xAA";
+				str +="\xAA";
 				dBuffer = iter->EncoderValue;
 			}
 			else
 			{
-				str += "\x55";
+				str +="\x55";
 				dBuffer = -iter->EncoderValue;
 			}
-			sBuffer.Format(_T("%d%d%d%d%d%d%d%d%d%d"), (long)dBuffer / 1000000000 % 10, (long)dBuffer / 100000000 % 10, (long)dBuffer / 10000000 % 10, (long)dBuffer / 1000000 % 10, (long)dBuffer / 100000 % 10, (long)dBuffer / 10000 % 10, (long)dBuffer / 1000, (long)dBuffer / 100 % 10, (long)dBuffer / 10 % 10, (long)dBuffer % 10);
-			str += (char*)sBuffer.GetBuffer();
+// 			sBuffer.Format(_T("%d%d%d%d%d%d%d%d%d%d"), (long)dBuffer / 1000000000 % 10, (long)dBuffer / 100000000 % 10, (long)dBuffer / 10000000 % 10, (long)dBuffer / 1000000 % 10, (long)dBuffer / 100000 % 10, (long)dBuffer / 10000 % 10, (long)dBuffer / 1000, (long)dBuffer / 100 % 10, (long)dBuffer / 10 % 10, (long)dBuffer % 10);
+// 			str += (char*)sBuffer.GetBuffer();
+			oss<<(long)dBuffer / 1000000000 % 10<< (long)dBuffer / 100000000 % 10<< (long)dBuffer / 10000000 % 10<< (long)dBuffer / 1000000 % 10<< (long)dBuffer / 100000 % 10<< (long)dBuffer / 10000 % 10<< (long)dBuffer / 1000<< (long)dBuffer / 100 % 10<< (long)dBuffer / 10 % 10<< (long)dBuffer % 10 ;
+			str +=oss.str();
+			oss.str("");
 		}
 		Bale(str);//加上包头包尾
 		pAgent->Send(dwConnID, (const BYTE*)str.c_str(), str.length());

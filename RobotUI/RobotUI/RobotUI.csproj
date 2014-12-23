@@ -72,6 +72,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Backstage.cs" />
+    <Compile Include="BackstageOper.cs" />
     <Compile Include="StaticValue.cs" />
     <Compile Include="StatusValue.cs" />
     <Compile Include="TargetListController.cs" />

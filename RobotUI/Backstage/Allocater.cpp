@@ -8,14 +8,18 @@ namespace robot
 {
 	BACKSTAGE_API int WINAPI Allocater_Startup(RCInfo *pInfos,int num)
 	{
+		mutex_newTarget=CreateMutex(NULL,FALSE,NULL);
+		mutex_AllocatedTarget=CreateMutex(NULL,FALSE,NULL);
 		if(allocater_isStarted) return 0;
 		while (--num>=0)
 		{
 			AllocatedInfo theAllocatedInfo;
 			theAllocatedInfo.RCID=pInfos[num].RcID;
+			WaitForSingleObject(mutex_AllocatedTarget,INFINITE);
+			vecSendInfos.push_back(theAllocatedInfo);
 			vecAllocatedInfos.push_back(theAllocatedInfo);
+			ReleaseMutex(mutex_AllocatedTarget);
 		}
-		mutex_newTarget=CreateMutex(NULL,FALSE,NULL);
 		allocater_isStarted=true;
 		return 0;
 	}
@@ -51,19 +55,25 @@ namespace robot
 		WaitForSingleObject(mutex_newTarget,INFINITE);
 		while (vecNewTargets.size()>0)
 		{
+			WaitForSingleObject(mutex_AllocatedTarget,INFINITE);
 			vecAllocatedInfos[index_RC].targets.push_back(vecNewTargets.front());
+			vecSendInfos[index_RC].targets.push_back(vecNewTargets.front());
 			vecNewTargets.erase(vecNewTargets.begin());
 			if(++index_RC==vecAllocatedInfos.size()) index_RC=0;
+			ReleaseMutex(mutex_AllocatedTarget);
 		}
 		ReleaseMutex(mutex_newTarget);
-		for (vector<AllocatedInfo>::iterator iter=vecAllocatedInfos.begin();iter!=vecAllocatedInfos.end();++iter)
+		for (vector<AllocatedInfo>::iterator iter=vecSendInfos.begin();iter!=vecSendInfos.end();++iter)
 		{
 			Networker_SendTargets(iter->RCID,&(iter->targets));
+			iter->targets.clear();
 		}
 		return 0;
 	}
-	BACKSTAGE_API int WINAPI Allocater_AddNewTargets(Target *targets,int num)
+	int Allocater_AddNewTargets(Target *targets,int num)
 	{
+		if(!allocater_isStarted) return ERROR_ALLOCATE_STARTUP_FAILED;
+		if (num<=0) return 0;
 		WaitForSingleObject(mutex_newTarget,INFINITE);
 		int index=0;
 		while (index<num)

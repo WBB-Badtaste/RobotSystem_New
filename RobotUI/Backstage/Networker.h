@@ -2,7 +2,7 @@
 
 #include <string>
 #include <vector>
-#include <atlstr.h>
+#include <sstream>
 #include "HPSocket.h"
 #pragma comment(lib,"HPSocket_U.lib")
 
