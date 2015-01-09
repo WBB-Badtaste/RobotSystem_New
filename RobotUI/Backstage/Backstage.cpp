@@ -42,5 +42,9 @@ namespace robot
 		if(backstageRes) return backstageRes;
 		return 0;
 	}
+	int Backstage_SendCatchTargetsToUI(int *targetIDs,int num)
+	{
+		return SendCatchInfos(targetIDs,num);
+	}
 }
 

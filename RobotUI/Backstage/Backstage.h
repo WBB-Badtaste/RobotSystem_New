@@ -8,4 +8,6 @@ namespace robot
 	static int backstageRes=0;
 	static CB2UI_NEWTARGET SendNewTargetToUI=nullptr;
 	static CB2UI_CATCHTARGET SendCatchInfos=nullptr;
+
+	int Backstage_SendCatchTargetsToUI(int *targetIDs,int num);
 }

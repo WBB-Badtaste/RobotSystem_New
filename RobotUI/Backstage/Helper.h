@@ -6,10 +6,4 @@
 namespace robot
 {
 	using namespace std;
-
-	struct AllocatedInfo
-	{
-		int RCID;
-		vector<Target> targets;
-	};
 }

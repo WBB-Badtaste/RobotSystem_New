@@ -39,7 +39,7 @@ namespace Robot
                     IntPtr iPtr = new IntPtr();
                     iPtr = Marshal.AllocHGlobal(localIp.Length);
                     iPtr = Marshal.StringToHGlobalUni(localIp);
-                    res = Backstage.Backstage_Startup(prt, rcInfos2dll.Length, iPtr);
+                    res = Backstage.Backstage_Startup(prt, rcInfos2dll.Length,iPtr);
                     Marshal.FreeHGlobal(iPtr);
                 }
                 for (int j = 0; j < rcInfos.Length; ++j)
@@ -62,7 +62,7 @@ namespace Robot
             }
             return 0;
         }
-        private static unsafe int OnCatchTarget(int* targetIDs, int num)
+        unsafe private static int OnCatchTarget(int* targetIDs, int num)
         {
             for (int i = 0; i < num; ++i)
             {

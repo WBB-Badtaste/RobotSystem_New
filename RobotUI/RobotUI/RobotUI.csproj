@@ -76,6 +76,7 @@
     <Compile Include="StaticValue.cs" />
     <Compile Include="StatusValue.cs" />
     <Compile Include="TargetListController.cs" />
+    <Compile Include="VirtualVision.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

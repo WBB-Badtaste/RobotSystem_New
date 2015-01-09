@@ -19,3 +19,4 @@
 #include "Networker.h"
 #include "Encoder.h"
 #include "Backstage.h"
+#include "ErrorInfos.h"

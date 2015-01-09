@@ -12,25 +12,27 @@ namespace robot
 		switch(pInfo->data[9])
 		{
 		case 0x46://抓取反馈
-			targetCount=pInfo->data[10]&0x0f*10+pInfo->data[11]&0x0f;
-			while(index<targetCount)
+			targetCount=(pInfo->data[10]&0x0f)*10+pInfo->data[11]&0x0f;
+			while(targetCount>index)
 			{
 				if (pInfo->data[16+5*index]==0xAA)
 				{
 					//抓取成功
-					catchedTargetIDs[index]=pInfo->data[12+5*index]&0x0f*1000+pInfo->data[13+5*index]&0x0f*100+pInfo->data[14+5*index]&0x0f*10+pInfo->data[15+5*index]&0x0f;
+					catchedTargetIDs[index]=(pInfo->data[12+5*index]&0x0f)*1000+(pInfo->data[13+5*index]&0x0f)*100+(pInfo->data[14+5*index]&0x0f)*10+pInfo->data[15+5*index]&0x0f;
 					catchCount++;
 				}
 				else
 				{
 					//抓取失败
 				}
-				SendCatchInfos(catchedTargetIDs,catchCount);
+				index++;
 			}
 			break;
 		default:
 			break;
 		}
+		Backstage_SendCatchTargetsToUI(catchedTargetIDs,catchCount);
+		Allocater_DelCatchedTarget(catchedTargetIDs,catchCount,CONNID_RCID[pInfo->connID]);
 		delete[] pInfo->data;
 		delete pInfo;
 		return 0;
@@ -58,8 +60,8 @@ namespace robot
 	BACKSTAGE_API int WINAPI Networker_Startup(RCInfo *pInfos,int num,LPCTSTR localIP)
 	{
 		if(netWorker_isStarted) return 0;
-		ZeroMemory(catchedTargetIDs,100);
 		if (!mutex_connid) mutex_connid=CreateMutex(NULL,FALSE,NULL);
+		ZeroMemory(catchedTargetIDs,100);
 		WaitForSingleObject(mutex_connid,INFINITE);
  		if(pAgent->Start(localIP,FALSE)==FALSE)
  		{

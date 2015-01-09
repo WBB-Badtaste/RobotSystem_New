@@ -28,8 +28,6 @@ namespace Robot
         private StatusValue m_statusValue;
         private DoubleAnimation m_daMove;
         private DispatcherTimer m_dispatcherTimer;
-        private int m_nextpos = 0;
-        private int m_nowpos = 0;
         public MainWindow()
         {
             InitializeComponent();
@@ -69,6 +67,10 @@ namespace Robot
         }
         private void BindConveyor()
         {
+            stuffConveyor.SetBinding(Canvas.LeftProperty, new Binding("StuffConveyorOriginX") { Source = m_staticValue });
+            stuffConveyor.SetBinding(Canvas.TopProperty, new Binding("StuffConveyorOriginY") { Source = m_staticValue });
+            boxConveyor.SetBinding(Canvas.LeftProperty, new Binding("BoxConveyorOriginX") { Source = m_staticValue });
+            boxConveyor.SetBinding(Canvas.TopProperty, new Binding("BoxConveyorOriginY") { Source = m_staticValue });
             MultiBinding MBStuffConveyorX = new MultiBinding() { Converter = new DoubleScreenRateZoomRateConverter() };
             MBStuffConveyorX.Bindings.Add(new Binding("StuffConveyorLength") { Source = m_staticValue });
             MBStuffConveyorX.Bindings.Add(new Binding("ScreenRate") { Source = m_staticValue });
@@ -90,6 +92,27 @@ namespace Robot
             MBBoxfConveyorY.Bindings.Add(new Binding("ZoomRate") { Source = m_staticValue });
             boxConveyor.SetBinding(Rectangle.HeightProperty, MBBoxfConveyorY);
         }
+        private void BindTarget(ref Ellipse eNewTarget, ref TargetUI targetUI)
+        {
+            MultiBinding MBTargetR = new MultiBinding() { Converter = new TargetSizeConverter() };
+            MBTargetR.Bindings.Add(new Binding("TargetRadius") { Source = m_staticValue });
+            MBTargetR.Bindings.Add(new Binding("ScreenRate") { Source = m_staticValue });
+            MBTargetR.Bindings.Add(new Binding("ZoomRate") { Source = m_staticValue });
+            eNewTarget.SetBinding(Ellipse.WidthProperty, MBTargetR);
+            eNewTarget.SetBinding(Ellipse.HeightProperty, MBTargetR);
+            MultiBinding MBTargetCanvasLeft = new MultiBinding() { Converter = new TargetPosXConverter(targetUI.Target.PosX) };
+            MBTargetCanvasLeft.Bindings.Add(new Binding("TargetRadius") { Source = m_staticValue });
+            MBTargetCanvasLeft.Bindings.Add(new Binding("StuffConveyorOriginX") { Source = m_staticValue });
+            MBTargetCanvasLeft.Bindings.Add(new Binding("ScreenRate") { Source = m_staticValue });
+            MBTargetCanvasLeft.Bindings.Add(new Binding("ZoomRate") { Source = m_staticValue });
+            eNewTarget.SetBinding(Canvas.LeftProperty, MBTargetCanvasLeft);
+            MultiBinding MBTargetCanvasTop = new MultiBinding() { Converter = new TargetPosYConverter(targetUI.Target.PosY) };
+            MBTargetCanvasTop.Bindings.Add(new Binding("TargetRadius") { Source = m_staticValue });
+            MBTargetCanvasTop.Bindings.Add(new Binding("StuffConveyorOriginY") { Source = m_staticValue });
+            MBTargetCanvasTop.Bindings.Add(new Binding("ScreenRate") { Source = m_staticValue });
+            MBTargetCanvasTop.Bindings.Add(new Binding("ZoomRate") { Source = m_staticValue });
+            eNewTarget.SetBinding(Canvas.TopProperty, MBTargetCanvasTop);
+        }
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             m_daMove = new DoubleAnimation();
@@ -99,27 +122,25 @@ namespace Robot
             m_dispatcherTimer.Interval = TimeSpan.FromMilliseconds(m_staticValue.RefreshTime);
             m_dispatcherTimer.Start();
         }
-        static int lastEncoderValue = 0;
+        static int currentEncoderValue = 100;
         private void OnTimedEvent(object sender, EventArgs e)
         {
+            
+            //读编码器值
+/*            Backstage.Encoder_Read(0, ref currentEncoderValue);*/
+            currentEncoderValue += 20;
             //扫描并显示新的Target图形
             TargetListController.Draw(DrawTarget);
             //处理已抓取的Target
             TargetListController.DealWithCatchedTargets(DelTarget);
-            //读编码器值
-            int nextEncoderValue = 0;
-            Backstage.Encoder_Read(0, ref nextEncoderValue);
-            if (lastEncoderValue == nextEncoderValue) return;
-            m_nextpos += (nextEncoderValue - lastEncoderValue);
-            lastEncoderValue = nextEncoderValue;
             //移动Targets
             TargetListController.Move(MoveTarget);
-            m_nowpos = m_nextpos;
         }
         private bool MoveTarget(IEnumerator<TargetUI> ie)
         {
-            m_daMove.By = (m_nextpos - m_nowpos) * m_staticValue.StuffEncoderRate / m_staticValue.ScreenRate * m_staticValue.ZoomRate;
+            m_daMove.By = (currentEncoderValue - ie.Current.ShowEncoderValue) * m_staticValue.StuffEncoderRate / m_staticValue.ScreenRate * m_staticValue.ZoomRate;
             ie.Current.TT.BeginAnimation(TranslateTransform.XProperty, m_daMove);
+            ie.Current.ShowEncoderValue = currentEncoderValue;
             return true;
         }
         private bool DelTarget(UIElement element)
@@ -130,30 +151,20 @@ namespace Robot
         private bool DrawTarget(ref TargetUI targetUI)
         {
             Ellipse eNewTarget = new Ellipse();
-            //设置大小
-            BindTarget(eNewTarget);
             //设置颜色
             SolidColorBrush mySolidColorBrush = new SolidColorBrush();
             mySolidColorBrush.Color = Color.FromArgb(255, 100, 149, 237);
             eNewTarget.Fill = mySolidColorBrush;
             //设置在画布的位置
             canvas2D.Children.Add(eNewTarget);
-            Canvas.SetLeft(eNewTarget, targetUI.Target.PosX / m_staticValue.ScreenRate * m_staticValue.ZoomRate);
-            Canvas.SetTop(eNewTarget, targetUI.Target.PosY / m_staticValue.ScreenRate * m_staticValue.ZoomRate + 10);
+            //设置大小、位置
+            BindTarget(ref eNewTarget, ref targetUI);
             //设置呈现变形
             eNewTarget.RenderTransform = targetUI.TT;
             //关联target实例
             targetUI.UIElement = eNewTarget;
+            targetUI.ShowEncoderValue = currentEncoderValue;
             return true;
-        }
-        private void BindTarget(Ellipse eNewTarget)
-        {
-            MultiBinding MBTargetR = new MultiBinding() { Converter = new DoubleScreenRateZoomRateConverter() };
-            MBTargetR.Bindings.Add(new Binding("TargetRadius") { Source = m_staticValue });
-            MBTargetR.Bindings.Add(new Binding("ScreenRate") { Source = m_staticValue });
-            MBTargetR.Bindings.Add(new Binding("ZoomRate") { Source = m_staticValue });
-            eNewTarget.SetBinding(Ellipse.WidthProperty, MBTargetR);
-            eNewTarget.SetBinding(Ellipse.HeightProperty, MBTargetR);
         }
         private void mainWindow_Closed(object sender, EventArgs e)
         {
@@ -169,36 +180,13 @@ namespace Robot
             if (m_statusValue.WorkStatus == enWorkStatus.SUSPEND) m_statusValue.WorkStatus = enWorkStatus.STARTED;
             else if (m_statusValue.WorkStatus == enWorkStatus.STARTED) m_statusValue.WorkStatus = enWorkStatus.SUSPEND;
         }
-        private void button1_Click(object sender, RoutedEventArgs e)
+        private void button1_Click1(object sender, RoutedEventArgs e)
         {
-            Target[] targets = new Target[4];
-            targets[0].Aangle = 12;
-            targets[0].EncoderValue = 0;
-            targets[0].ID = 10;
-            targets[0].PosX = 123.33;
-            targets[0].PosY = 67.23;
-            targets[1].Aangle = 12.1;
-            targets[1].EncoderValue = 200;
-            targets[1].ID = 11;
-            targets[1].PosX = 83.23;
-            targets[1].PosY = 150.22;
-            targets[2].Aangle = 12.1;
-            targets[2].EncoderValue = 300;
-            targets[2].ID = 12;
-            targets[2].PosX = 69.04;
-            targets[2].PosY = 323.22;
-            targets[3].Aangle = 12.1;
-            targets[3].EncoderValue = 400;
-            targets[3].ID = 13;
-            targets[3].PosX = 0;
-            targets[3].PosY = 423.22;
-            unsafe
-            {
-                fixed (Target* p = targets)
-                {
-                    Backstage.Backstage_AddNewTargets(p, targets.Length);
-                }
-            }
+            VirtualVision.VirtualVision_Start();
+        }
+        private void button1_Click2(object sender, RoutedEventArgs e)
+        {
+            VirtualVision.VirtualVision_Stop();
         }
     }
 }

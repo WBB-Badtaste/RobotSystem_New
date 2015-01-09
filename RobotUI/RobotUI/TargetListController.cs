@@ -9,16 +9,18 @@ using System.Collections;
 
 namespace Robot
 {
-    public class TargetUI
+    public class TargetUI 
     {
         public TargetUI(Target target)
         {
             Target = target;
             TT = new TranslateTransform();
+            ShowEncoderValue = target.EncoderValue;
         }
         public Target Target { get; set; }
         public UIElement UIElement { get; set; }
         public TranslateTransform TT { get; set; }
+        public int ShowEncoderValue { get; set; }
     };
     class TargetListController
     {
@@ -36,6 +38,7 @@ namespace Robot
         public delegate bool DelUIElement(UIElement element);
         public static bool DealWithCatchedTargets(DelUIElement DelElement)
         {
+            if (staticStuffTargets.Count() <= 0) return false;
             bool res = true;
             while (staticCatchedTargetIDs.Count() > 0)
             {

@@ -13,11 +13,15 @@ namespace Robot
         public event PropertyChangedEventHandler PropertyChanged;
         public StaticValue()
         {
+            stuffConveyorOriginX = 0;
+            stuffConveyorOriginY = 10;
             stuffConveyorLength = 3000;
             stuffConveyorWidth = 600;
+            boxConveyorOriginX = 0;
+            boxConveyorOriginY = 620;
             boxConveyorLength = 3000;
             boxConveyorWidth = 200;
-            targetRadius = 100;
+            targetRadius = 50;
             canvasX = 3200;
             canvasY = 1000;
             refreshTime = 100;
@@ -354,22 +358,4 @@ namespace Robot
         /// </summary>
         public static int RcCount { get; set; }
     }
-/******************************************************
- *
- *                  转换器
- *        
- ******************************************************/
-    public class DoubleScreenRateZoomRateConverter:IMultiValueConverter
-    {
-        public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            return (double)values[0] / (double)values[1] * (double)values[2];
-        }
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
-    
-    
 }

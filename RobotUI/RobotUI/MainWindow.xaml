@@ -10,14 +10,17 @@
         </Grid.RowDefinitions>
         <ScrollViewer Name="scrollViewer1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" >
             <Canvas x:Name="canvas2D" Background="Gainsboro" >
-                <Rectangle x:Name="stuffConveyor" Canvas.Top="10" Stroke="Black"/>
-                <Rectangle x:Name="boxConveyor" Canvas.Top="620" Stroke="Black"/>
+                <Rectangle x:Name="stuffConveyor" Stroke="Black"/>
+                <Rectangle x:Name="boxConveyor" Stroke="Black"/>
             </Canvas>
         </ScrollViewer>
         <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Center">
             <Button x:Name="Button_Start" Width="69" Height="23" Click="Button_Start_Click" Margin="5,0"/>
             <Button x:Name="Button_Suspend" Width="69" Height="23" Click="Button_Suspend_Click" Margin="5,0"/>
         </StackPanel>
-        <Button Content="Button" Grid.Row="1" Height="23" HorizontalAlignment="Left" Margin="406,0,0,0" Name="button1" VerticalAlignment="Top" Width="75" Click="button1_Click" />
+        <StackPanel Orientation="Horizontal" Grid.Row="1">
+            <Button Content="启动生成器"  Height="23" HorizontalAlignment="Left"  Name="button1" VerticalAlignment="Top" Width="75" Click="button1_Click1" />
+            <Button Content="停止生成器" Height="23" HorizontalAlignment="Left"  Name="button2" VerticalAlignment="Top" Width="75" Click="button1_Click2" />
+        </StackPanel>
     </Grid>
 </Window>

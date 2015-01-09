@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RobotUI", "RobotUI\RobotUI.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Backstage", "Backstage\Backstage.vcxproj", "{92DC947D-A34B-49E9-A98C-A1D2DA0617E0}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VirtualVision", "VirtualVision\VirtualVision.vcxproj", "{131D233E-4CB8-499F-AE69-FD10E6B14498}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -35,6 +37,16 @@ Global
 		{92DC947D-A34B-49E9-A98C-A1D2DA0617E0}.Release|Win32.ActiveCfg = Release|Win32
 		{92DC947D-A34B-49E9-A98C-A1D2DA0617E0}.Release|Win32.Build.0 = Release|Win32
 		{92DC947D-A34B-49E9-A98C-A1D2DA0617E0}.Release|x86.ActiveCfg = Release|Win32
+		{131D233E-4CB8-499F-AE69-FD10E6B14498}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{131D233E-4CB8-499F-AE69-FD10E6B14498}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{131D233E-4CB8-499F-AE69-FD10E6B14498}.Debug|Win32.ActiveCfg = Debug|Win32
+		{131D233E-4CB8-499F-AE69-FD10E6B14498}.Debug|Win32.Build.0 = Debug|Win32
+		{131D233E-4CB8-499F-AE69-FD10E6B14498}.Debug|x86.ActiveCfg = Debug|Win32
+		{131D233E-4CB8-499F-AE69-FD10E6B14498}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{131D233E-4CB8-499F-AE69-FD10E6B14498}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{131D233E-4CB8-499F-AE69-FD10E6B14498}.Release|Win32.ActiveCfg = Release|Win32
+		{131D233E-4CB8-499F-AE69-FD10E6B14498}.Release|Win32.Build.0 = Release|Win32
+		{131D233E-4CB8-499F-AE69-FD10E6B14498}.Release|x86.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

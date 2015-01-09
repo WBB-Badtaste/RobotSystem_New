@@ -29,7 +29,7 @@ namespace robot
 	static USHORT packetID;
 	static USHORT GeneratePacketID(){ return ++packetID; }
 	static vector<HANDLE> hReceiveThreads;
-	static int catchedTargetIDs[100];
+	static int catchedTargetIDs[100];	 
 	static void Bale(string &str)
 	{
 		string sBuffer("\x02");

@@ -8,17 +8,10 @@ namespace robot
 {
 	BACKSTAGE_API int WINAPI Allocater_Startup(RCInfo *pInfos,int num)
 	{
-		mutex_newTarget=CreateMutex(NULL,FALSE,NULL);
-		mutex_AllocatedTarget=CreateMutex(NULL,FALSE,NULL);
 		if(allocater_isStarted) return 0;
-		while (--num>=0)
+		for (int i=0;i<num;++i)
 		{
-			AllocatedInfo theAllocatedInfo;
-			theAllocatedInfo.RCID=pInfos[num].RcID;
-			WaitForSingleObject(mutex_AllocatedTarget,INFINITE);
-			vecSendInfos.push_back(theAllocatedInfo);
-			vecAllocatedInfos.push_back(theAllocatedInfo);
-			ReleaseMutex(mutex_AllocatedTarget);
+			RCIDs.push_back(pInfos[i].RcID);
 		}
 		allocater_isStarted=true;
 		return 0;
@@ -56,17 +49,17 @@ namespace robot
 		while (vecNewTargets.size()>0)
 		{
 			WaitForSingleObject(mutex_AllocatedTarget,INFINITE);
-			vecAllocatedInfos[index_RC].targets.push_back(vecNewTargets.front());
-			vecSendInfos[index_RC].targets.push_back(vecNewTargets.front());
+			RCID_AllocatedTargets[RCIDs[index_RC]].push_back(vecNewTargets.front());
+			RCID_SendTargets[RCIDs[index_RC]].push_back(vecNewTargets.front());
 			vecNewTargets.erase(vecNewTargets.begin());
-			if(++index_RC==vecAllocatedInfos.size()) index_RC=0;
+			if(++index_RC==RCIDs.size()) index_RC=0;
 			ReleaseMutex(mutex_AllocatedTarget);
 		}
 		ReleaseMutex(mutex_newTarget);
-		for (vector<AllocatedInfo>::iterator iter=vecSendInfos.begin();iter!=vecSendInfos.end();++iter)
+		for (map<int,vector<Target>>::iterator iter=RCID_SendTargets.begin();iter!=RCID_SendTargets.end();++iter)
 		{
-			Networker_SendTargets(iter->RCID,&(iter->targets));
-			iter->targets.clear();
+			Networker_SendTargets(iter->first,&iter->second);
+			iter->second.clear();
 		}
 		return 0;
 	}
@@ -82,6 +75,21 @@ namespace robot
 		}
 		ReleaseMutex(mutex_newTarget);
 		hThreadAllocate=(HANDLE)_beginthreadex(NULL,0,ThreadAllocate,NULL,0,NULL);
+		return 0;
+	}
+	int Allocater_DelCatchedTarget(int *targetIDs,int targetCount,int RCID)
+	{
+		WaitForSingleObject(mutex_AllocatedTarget,INFINITE);
+		while(targetCount--)
+		{
+			vector<Target> *p=&RCID_AllocatedTargets[RCID];
+			for(vector<Target>::iterator iter=p->begin();iter !=p->end();++iter)
+			{
+				if(iter->ID==targetIDs[targetCount])
+					p->erase(iter);
+			}
+		}
+		ReleaseMutex(mutex_AllocatedTarget);
 		return 0;
 	}
 }
