@@ -40,7 +40,7 @@ namespace Robot
         {
             if (staticStuffTargets.Count() <= 0) return false;
             bool res = true;
-            while (staticCatchedTargetIDs.Count() > 0)
+            while (staticCatchedTargetIDs.Count() > 0) 
             {
                 for (int i = 0; i < staticStuffTargets.Count(); ++i)
                 {

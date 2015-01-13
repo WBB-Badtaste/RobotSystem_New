@@ -1,33 +1,34 @@
-﻿生成启动时间为 2014/12/29 星期一 18:02:10。
-     1>项目“E:\Github\RobotSystem_New\RobotUI\Backstage\Backstage.vcxproj”在节点 2 上(build 个目标)。
+﻿Build started 2015/1/12 10:38:30.
+     1>Project "E:\Github\RobotSystem_New\RobotUI\Backstage\Backstage.vcxproj" on node 2 (build target(s)).
      1>InitializeBuildStatus:
-         正在创建“Debug\Backstage.unsuccessfulbuild”，因为已指定“AlwaysCreate”。
+         Creating "Debug\Backstage.unsuccessfulbuild" because "AlwaysCreate" was specified.
        ClCompile:
-         所有输出均为最新。
-         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _USRDLL /D BACKSTAGE_EXPORTS /D _WINDLL /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"StdAfx.h" /Fp"Debug\Backstage.pch" /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt Backstage.cpp
-         Backstage.cpp
-         所有输出均为最新。
+         All outputs are up-to-date.
+         D:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _USRDLL /D BACKSTAGE_EXPORTS /D _WINDLL /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"StdAfx.h" /Fp"Debug\Backstage.pch" /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt Filter.cpp
+         Filter.cpp
+         All outputs are up-to-date.
        ManifestResourceCompile:
-         所有输出均为最新。
+         All outputs are up-to-date.
        Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"E:\Github\RobotSystem_New\RobotUI\Debug\Backstage.dll" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\Backstage.dll.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"E:\Github\RobotSystem_New\RobotUI\Debug\Backstage.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"E:\Github\RobotSystem_New\RobotUI\Debug\Backstage.lib" /MACHINE:X86 /DLL Debug\Backstage.dll.embed.manifest.res
+         D:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"E:\Github\RobotSystem_New\RobotUI\Debug\Backstage.dll" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\Backstage.dll.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"E:\Github\RobotSystem_New\RobotUI\Debug\Backstage.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"E:\Github\RobotSystem_New\RobotUI\Debug\Backstage.lib" /MACHINE:X86 /DLL Debug\Backstage.dll.embed.manifest.res
          Debug\Allocater.obj
          Debug\Backstage.obj
          Debug\dllmain.obj
          Debug\Encoder.obj
+         Debug\Filter.obj
          Debug\Networker.obj
          Debug\stdafx.obj
        Manifest:
          C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /out:"Debug\Backstage.dll.embed.manifest" /manifest Debug\Backstage.dll.intermediate.manifest
-         所有输出均为最新。
+         All outputs are up-to-date.
        LinkEmbedManifest:
-         所有输出均为最新。
+         All outputs are up-to-date.
          Backstage.vcxproj -> E:\Github\RobotSystem_New\RobotUI\Debug\Backstage.dll
        FinalizeBuildStatus:
-         正在删除文件“Debug\Backstage.unsuccessfulbuild”。
-         正在对“Debug\Backstage.lastbuildstate”执行 Touch 任务。
-     1>已完成生成项目“E:\Github\RobotSystem_New\RobotUI\Backstage\Backstage.vcxproj”(build 个目标)的操作。
+         Deleting file "Debug\Backstage.unsuccessfulbuild".
+         Touching "Debug\Backstage.lastbuildstate".
+     1>Done Building Project "E:\Github\RobotSystem_New\RobotUI\Backstage\Backstage.vcxproj" (build target(s)).
 
-生成成功。
+Build succeeded.
 
-已用时间 00:00:04.19
+Time Elapsed 00:00:00.56

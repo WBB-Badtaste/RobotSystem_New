@@ -81,6 +81,7 @@
     <ClInclude Include="BackstageInterface.h" />
     <ClInclude Include="Encoder.h" />
     <ClInclude Include="ErrorInfos.h" />
+    <ClInclude Include="Filter.h" />
     <ClInclude Include="Helper.h" />
     <ClInclude Include="Networker.h" />
     <ClInclude Include="stdafx.h" />
@@ -98,6 +99,7 @@
       </PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Encoder.cpp" />
+    <ClCompile Include="Filter.cpp" />
     <ClCompile Include="Networker.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

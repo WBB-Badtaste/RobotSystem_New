@@ -36,6 +36,7 @@ namespace robot
 	}
 	BACKSTAGE_API int WINAPI Backstage_AddNewTargets(Target *targets,int num)
 	{
+		Filter_HandleObjects(targets,&num);
 		backstageRes = SendNewTargetToUI(targets,num);
 		if(backstageRes) return backstageRes;
 		backstageRes = Allocater_AddNewTargets(targets,num);
